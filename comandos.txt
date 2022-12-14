@@ -1,0 +1,34 @@
+Passos a seguir neste tutorial:
+
+1 - Criar uma aplicação Java Spring Boot
+2 - Criar um arquivo Dockerfile válido
+3 - Gerar uma imagem local do Docker
+4 - Subir a imagem gerada para o Docker Hub
+5 - Remover as imagens locais e depois baixar a imagem do Docker Hub
+6 - Rodar o projeto através da imagem do Docker Hub
+
+
+
+
+// Berar a imagem local do Docker
+docker-kube-java % docker build -t docker-kube-java .
+
+// verificando as imagens locais geradas
+Comando: docker images
+REPOSITORY                TAG       IMAGE ID       CREATED          SIZE
+estudo/docker-kube-java   latest    e09e4d250225   30 seconds ago   343MB
+
+// Tagueando a imagem local para o Docker Hub
+Comando: docker tag docker-kube-java gbraggion/docker-kube-java
+
+// Enviando a imagem para o Docker Hub
+Comando: docker push gbraggion/docker-kube-java 
+
+// Deletando as imagens locais para baixar do Docker Hub posteriormente
+docker rmi docker-kube-java gbraggion/docker-kube-java    
+
+// Baixando e rodando a imagem que foi publicada no Docker Hub
+docker run -p 8080:8080 gbraggion/docker-kube-java
+
+// Caso o comando acima dê erro de privilégios, rodar o comando abaixo:
+docker login
