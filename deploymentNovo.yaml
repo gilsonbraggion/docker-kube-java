@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: docker-kube-java
+  name: docker-kube-java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-kube-java
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: docker-kube-java
+    spec:
+      containers:
+      - image: gbraggion/docker-kube-java
+        name: docker-kube-java
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: docker-kube-java
+  name: docker-kube-java
+spec:
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8010
+  selector:
+    app: docker-kube-java
+  type: ClusterIP
+status:
+  loadBalancer: {}

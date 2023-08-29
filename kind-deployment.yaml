@@ -1,0 +1,59 @@
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: docker-kube-java-kind
+nodes:
+- role: control-plane
+  kubeadmConfigPatches:
+  - |
+    kind: InitConfiguration
+    nodeRegistration:
+      kubeletExtraArgs:
+        node-labels: "ingress-ready=true"    
+  extraPortMappings:
+  - containerPort: 80
+    hostPort: 8085
+    protocol: TCP
+  - containerPort: 443
+    hostPort: 443
+    protocol: TCP
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: docker-kube-java
+  labels:
+    app: docker-kube-java
+spec:
+  containers:
+  - name: docker-kube-java
+    image: gbraggion/docker-kube-java
+    args:
+    - "-text=Hello World!"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: docker-kube-java-service
+spec:
+  selector:
+    app:docker-kube-java
+  ports:
+  # Default port used by the image
+  - port: 8085
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: docker-kube-java-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/baeldung"
+        backend:
+          service:
+            name: docker-kube-java-service
+            port:
+              number: 5678
+---

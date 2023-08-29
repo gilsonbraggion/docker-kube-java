@@ -8,7 +8,7 @@ Passos a seguir neste tutorial:
 6 - Rodar o projeto através da imagem do Docker Hub
 
 
-
+--------------- DOCKER --------------- 
 
 // Berar a imagem local do Docker
 docker-kube-java % docker build -t docker-kube-java .
@@ -32,3 +32,33 @@ docker run -p 8080:8080 gbraggion/docker-kube-java
 
 // Caso o comando acima dê erro de privilégios, rodar o comando abaixo:
 docker login
+
+
+--------------- KUBERNETES ---------------
+
+// Criando o arquivo de deployment exemplo do Kubernetes
+kubectl create deployment docker-kube-java --image=gbraggion/docker-kube-java --dry-run -o=yaml > deployment.yaml
+
+// Criando a configuração do Service padrão no mesmo aruquivo (Separar as configurações por ---)
+
+
+
+
+--------------- Kind ---------------
+kind create cluster --config kind-deployment.yaml
+
+
+
+
+
+--------------- Helm ---------------
+
+https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-helm/
+
+
+helm upgrade --install --create-namespace -n gilson gilson-java . -f values.yaml
+
+
+helm template -n gilson gilson-java . -f values.yaml > out.yaml
+
+helm create application

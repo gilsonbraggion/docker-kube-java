@@ -1,0 +1,68 @@
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 81
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 443
+        protocol: TCP
+  - role: worker
+  - role: worker
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-kube-java-deployment
+  labels:
+    app: docker-kube-java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docker-kube-java
+  template:
+    metadata:
+      labels:
+        app: docker-kube-java
+    spec:
+      containers:
+        - name: docker-kube-java
+          imagePullPolicy: IfNotPresent
+          image: gbraggion/docker-kube-java
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker-kube-java
+spec:
+  type: ClusterIP
+  selector:
+    app: docker-kube-java
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /teste
+            pathType: Prefix
+            backend:
+              service:
+                name: docker-kube-java
+                port:
+                  number: 80
